@@ -1,0 +1,4 @@
+packages:
+  - "cli"
+  - "templates/*"
+  - "addons/*"
