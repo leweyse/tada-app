@@ -123,7 +123,8 @@ fn main() {
     }
 
     let project_package_json_path = Path::new(&new_app_path).join("package.json");
-    let mut project_package_json = read_package_json(project_package_json_path.as_os_str());
+    let mut project_package_json: PackageJson =
+        read_json_file(project_package_json_path.as_os_str());
 
     let mut dependencies: BTreeMap<String, String> = BTreeMap::new();
     for (key, value) in project_package_json.dependencies.unwrap() {
@@ -147,8 +148,13 @@ fn main() {
 
         for addon in &selected_addons {
             let addon_path = Path::new(&addon.path);
+
+            let addon_tada_json_path = Path::new(addon_path).join("tada.json");
             let addon_package_json_path = Path::new(addon_path).join("package.json");
-            let addon_package_json = read_package_json(addon_package_json_path.as_os_str());
+
+            let addon_tada_json: TadaJson = read_json_file(addon_tada_json_path.as_os_str());
+            let addon_package_json: PackageJson =
+                read_json_file(addon_package_json_path.as_os_str());
 
             if let Some(dependencies_map) = addon_package_json.dependencies {
                 for (key, value) in dependencies_map {
@@ -162,15 +168,13 @@ fn main() {
                 }
             }
 
-            let tada_addon_config = addon_package_json.tada_addon.unwrap();
-
-            if let Some(scripts_map) = tada_addon_config.scripts {
+            if let Some(scripts_map) = addon_package_json.scripts {
                 for (key, value) in scripts_map {
                     scripts.insert(key, value);
                 }
             }
 
-            for addon_entry in &tada_addon_config.entries {
+            for addon_entry in &addon_tada_json.entries {
                 let addon_entry_source =
                     Path::new(&addon_path).join(OsString::from(&addon_entry.input).as_os_str());
                 let addon_entry_destination =

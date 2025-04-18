@@ -1,16 +1,7 @@
 {
   "name": "biomejs",
-  "tada_addon": {
-    "templates": ["all"],
-    "entries": [
-      {
-        "input": "src/biome.json",
-        "output": "."
-      }
-    ],
-    "scripts": {
-      "check": "biome check --write ."
-    }
+  "scripts": {
+    "check": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3"

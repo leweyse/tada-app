@@ -1,23 +1,5 @@
 {
   "name": "tailwindcss",
-  "tada_addon": {
-    "templates": ["all"],
-    "entries": [
-      {
-        "concatenate": true,
-        "input": "src/index.css",
-        "output": "./src/"
-      },
-      {
-        "input": "src/tailwind.config.ts",
-        "output": "."
-      },
-      {
-        "input": "src/postcss.config.cjs",
-        "output": "."
-      }
-    ]
-  },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",

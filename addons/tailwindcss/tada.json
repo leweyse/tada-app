@@ -1,0 +1,18 @@
+{
+  "templates": ["all"],
+  "entries": [
+    {
+      "concatenate": true,
+      "input": "src/index.css",
+      "output": "./src/"
+    },
+    {
+      "input": "src/tailwind.config.ts",
+      "output": "."
+    },
+    {
+      "input": "src/postcss.config.cjs",
+      "output": "."
+    }
+  ]
+}
