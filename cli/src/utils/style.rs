@@ -1,10 +1,9 @@
 #![deny(clippy::all)]
 
-use std::time::Duration;
 use std::{borrow::Cow, env, f64::consts::PI};
 
+use cliclack::{spinner, ProgressBar};
 use console::{Style, StyledObject};
-use indicatif::{ProgressBar, ProgressStyle};
 use lazy_static::lazy_static;
 
 #[macro_export]
@@ -19,30 +18,11 @@ macro_rules! color {
 }
 
 pub fn start_spinner(message: &str) -> ProgressBar {
-    let pb = ProgressBar::new_spinner();
+    let spinner = spinner();
 
-    pb.enable_steady_tick(Duration::from_millis(125));
-    pb.set_style(
-        ProgressStyle::default_spinner()
-            // For more spinners check out the cli-spinners project:
-            // https://github.com/sindresorhus/cli-spinners/blob/master/spinners.json
-            .tick_strings(&[
-                CYAN.apply_to("⠋").to_string().as_str(),
-                CYAN.apply_to("⠙").to_string().as_str(),
-                CYAN.apply_to("⠹").to_string().as_str(),
-                CYAN.apply_to("⠸").to_string().as_str(),
-                CYAN.apply_to("⠼").to_string().as_str(),
-                CYAN.apply_to("⠴").to_string().as_str(),
-                CYAN.apply_to("⠦").to_string().as_str(),
-                CYAN.apply_to("⠧").to_string().as_str(),
-                CYAN.apply_to("⠇").to_string().as_str(),
-                CYAN.apply_to("⠏").to_string().as_str(),
-                "",
-            ]),
-    );
-    pb.set_message(message.to_string());
+    spinner.start(message);
 
-    pb
+    spinner
 }
 
 #[derive(Debug, Clone, Copy)]

@@ -4,15 +4,19 @@ use std::collections::BTreeMap;
 use std::ffi::OsString;
 
 use anyhow::Context;
-use inquire::{formatter::MultiOptionFormatter, Confirm, MultiSelect, Select, Text};
+use cliclack::{confirm, input, multiselect, select};
 
 use super::utils::fs::Details;
 
 pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &mut Details) {
-    let options_names = options.keys().cloned().collect::<Vec<String>>();
+    let options_names = options
+        .keys()
+        .map(|x| (x.to_string(), x.clone(), ""))
+        .collect::<Vec<_>>();
 
-    let template_selected = Select::new("What template do you want to use?", options_names)
-        .prompt()
+    let template_selected = select("What template do you want to use?")
+        .items(options_names.as_slice())
+        .interact()
         .with_context(|| "No template selected, exiting");
 
     match template_selected {
@@ -32,22 +36,15 @@ pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &
 }
 
 pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Details>) {
-    // let validator = |a: &[ListOption<&String>]| {
-    //   let x = a.iter().any(|o| *o.value == "tailwindcss");
-    //
-    //   match x {
-    //     true => Ok(Validation::Valid),
-    //     false => Ok(Validation::Invalid("Remember to use tailwindcss".into())),
-    //   }
-    // };
+    let options_names = options
+        .keys()
+        .map(|x| (x.to_string(), x.clone(), ""))
+        .collect::<Vec<_>>();
 
-    let formatter: MultiOptionFormatter<'_, String> = &|a| format!("{} addon(s)", a.len());
-
-    let options_names = options.keys().cloned().collect::<Vec<String>>();
-
-    let addons_selected = MultiSelect::new("Select the addons you want to use:", options_names)
-        .with_formatter(formatter)
-        .prompt()
+    let addons_selected = multiselect("Select the addons you want to use:")
+        .items(options_names.as_slice())
+        .required(false)
+        .interact()
         .with_context(|| "No addons selected, exiting");
 
     match addons_selected {
@@ -68,10 +65,10 @@ pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Detai
 }
 
 pub fn select_app_name(default_name: String, app_name: &mut String) {
-    let name_provided = Text::new("Where do you want to create the project?")
-        .with_placeholder("./my-project")
-        .with_default(&default_name)
-        .prompt()
+    let name_provided = input("Where do you want to create the project?")
+        .placeholder("./my-project")
+        .default_input(&default_name)
+        .interact()
         .with_context(|| "No project name provided, exiting");
 
     match name_provided {
@@ -85,9 +82,12 @@ pub fn select_app_name(default_name: String, app_name: &mut String) {
     }
 }
 
-pub fn try_installing_deps() -> Result<bool, anyhow::Error> {
-    return Confirm::new("Do you want to install the dependencies?")
-        .with_default(true)
-        .prompt()
-        .with_context(|| "No confirmation provided, exiting");
+pub fn try_installing_deps() -> bool {
+    let value = confirm("Do you want to install the dependencies?")
+        .initial_value(true)
+        .interact()
+        .with_context(|| "No confirmation provided, exiting")
+        .unwrap();
+
+    value
 }
