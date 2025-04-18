@@ -1,0 +1,9 @@
+{
+  "templates": ["all"],
+  "entries": [
+    {
+      "input": "src/biome.json",
+      "output": "."
+    }
+  ]
+}
