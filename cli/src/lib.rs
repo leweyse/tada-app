@@ -33,9 +33,12 @@ const IGNORE: [&str; 3] = ["node_modules", ".turbo", "dist"];
 
 #[napi]
 fn main() {
-    let tada_app_path = env::var_os(ENV_VAR)
-        .with_context(|| format!("Error reading env var: {}", ENV_VAR))
-        .unwrap();
+    let tada_app_path: OsString;
+
+    match env::var(ENV_VAR) {
+        Ok(path) => tada_app_path = OsString::from(path),
+        Err(_) => std::process::exit(1),
+    }
 
     let tada_templates_path = Path::new(&tada_app_path.clone()).join("templates");
 
