@@ -13,6 +13,7 @@ use std::u64;
 
 use anyhow::Context;
 use diffy::{apply, create_patch};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -25,10 +26,10 @@ pub struct Entry {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct TadaAddon {
+#[allow(non_snake_case)]
+pub struct TadaJson {
     templates: Vec<String>,
     pub entries: Vec<Entry>,
-    pub scripts: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -43,9 +44,6 @@ pub struct PackageJson {
 
     pub dependencies: Option<BTreeMap<String, String>>,
     pub devDependencies: Option<BTreeMap<String, String>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tada_addon: Option<TadaAddon>,
 }
 
 #[derive(Debug)]
@@ -54,14 +52,17 @@ pub struct Details {
     pub path: OsString,
 }
 
-pub fn read_package_json(path: &OsStr) -> PackageJson {
+pub fn read_json_file<T>(path: &OsStr) -> T
+where
+    T: DeserializeOwned,
+{
     let file = fs::File::open(path)
         .with_context(|| format!("Error reading file: {}", path.to_str().unwrap()))
         .unwrap();
 
     let reader = BufReader::new(file);
 
-    let package_json: PackageJson = serde_json::from_reader(reader)
+    let package_json: T = serde_json::from_reader(reader)
         .with_context(|| "Error parsing JSON")
         .unwrap();
 
@@ -124,14 +125,12 @@ pub fn get_filtered_addons(
 
         if let DirEntryValue::String(path) = addon_path {
             if let DirEntryValue::String(name) = addon_name {
-                let package_json_path = Path::new(&path).join("package.json");
+                let tada_json_path = Path::new(&path).join("tada.json");
 
-                let package_json = read_package_json(package_json_path.as_os_str());
+                let tada_json: TadaJson = read_json_file(tada_json_path.as_os_str());
 
-                let tada_addon_config = package_json.tada_addon.unwrap();
-
-                if tada_addon_config.templates.contains(&"all".to_string())
-                    || tada_addon_config.templates.contains(&template_name)
+                if tada_json.templates.contains(&"all".to_string())
+                    || tada_json.templates.contains(&template_name)
                 {
                     addons.insert(name.to_string(), OsString::from(path));
                 }
