@@ -7,20 +7,21 @@ extern crate fs_extra;
 mod prompts;
 mod utils;
 
-use fs_extra::copy_items_with_progress;
-use fs_extra::dir::{CopyOptions, TransitProcessResult};
+use fs_extra::copy_items;
+use fs_extra::dir::CopyOptions;
 use relative_path::RelativePath;
 use std::collections::BTreeMap;
+use std::env;
 use std::ffi::OsString;
 use std::fs::File;
 use std::path::Path;
-use std::{env, u64};
 
 use anyhow::Context;
+use cliclack::{intro, outro};
 
 use utils::fs::{
-    copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_package_json,
-    CopyAddonFileOptions, Details,
+    copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
+    CopyAddonFileOptions, Details, PackageJson, TadaJson,
 };
 use utils::pm::install_dependencies;
 use utils::style::{start_spinner, ColorConfig, BOLD_GREEN};
@@ -46,6 +47,8 @@ fn main() {
         std::process::exit(1);
     }
 
+    let _ = intro("create-tada-app").with_context(|| "Error printing intro");
+
     let mut selected_template: Details = Details {
         name: "".to_string(),
         path: OsString::new(),
@@ -68,6 +71,8 @@ fn main() {
 
     let mut app_name = String::new();
     select_app_name(selected_template.name.clone(), &mut app_name);
+
+    let should_install_deps = try_installing_deps();
 
     let cwd = env::current_dir()
         .with_context(|| "Error reading current directory")
@@ -99,26 +104,11 @@ fn main() {
 
     let copy_template_bar = start_spinner("Copying template...");
 
-    let template_copied = copy_items_with_progress(
-        &os_items_in_template,
-        new_app_path.as_os_str(),
-        &options,
-        |process_info| {
-            let parcentage =
-                (process_info.copied_bytes as f32 / process_info.total_bytes as f32) * 100.0;
-            copy_template_bar.set_position(parcentage as u64);
-            TransitProcessResult::ContinueOrAbort
-        },
-    )
-    .with_context(|| "Error copying template");
+    let template_copied = copy_items(&os_items_in_template, new_app_path.as_os_str(), &options)
+        .with_context(|| "Error copying template");
 
     match template_copied {
-        Ok(_) => {
-            copy_template_bar.finish_with_message(format!(
-                "{} Template ready",
-                color!(color_config, BOLD_GREEN, "{}", "✔")
-            ));
-        }
+        Ok(_) => copy_template_bar.stop("Template ready!"),
         Err(e) => println!("{:?}", e),
     }
 
@@ -211,10 +201,7 @@ fn main() {
             }
         }
 
-        copy_addons_bar.finish_with_message(format!(
-            "{} Addons ready",
-            color!(color_config, BOLD_GREEN, "{}", "✔")
-        ));
+        copy_addons_bar.stop("Addons ready!");
     }
 
     project_package_json.name = match new_app_path.file_name() {
@@ -240,25 +227,19 @@ fn main() {
     .with_context(|| "Error writing package.json file")
     .unwrap();
 
-    match try_installing_deps() {
-        Ok(should_install) => {
-            if should_install {
-                let install_progress = start_spinner("Installing dependencies...");
+    if should_install_deps {
+        let install_progress = start_spinner("Installing dependencies...");
 
-                if install_dependencies("pnpm", new_app_path) {
-                    install_progress.finish_with_message(format!(
-                        "\n{} Dependencies installed\n",
-                        color!(color_config, BOLD_GREEN, "{}", "✔")
-                    ));
-                }
-            }
+        if install_dependencies("pnpm", new_app_path) {
+            install_progress.stop("Dependencies installed!");
         }
-        Err(e) => println!("{:?}", e),
     }
 
-    println!(
-        "\n{}. {}\n",
-        color_config.rainbow("NEW PROJECT CREATED"),
+    let outro_msg = format!(
+        "{}. {}",
+        color_config.rainbow("PROJECT CREATED"),
         color!(color_config, BOLD_GREEN, "{}", "ENJOY! 🎉"),
     );
+
+    let _ = outro(outro_msg).with_context(|| "Error printing outro");
 }
