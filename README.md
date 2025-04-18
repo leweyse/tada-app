@@ -24,7 +24,7 @@ TADA_APP=<path-to-tada-app-in-your-system>
 pnpm build --filter create-tada-app
 
 # install the cli in your local registry
-npm install -g create-tada-app
+npm install -g ./cli
 
 # run the cli
 npx create-tada-app
