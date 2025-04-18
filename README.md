@@ -4,11 +4,30 @@ Build your own templates, add your own collection of re-usable addons and genera
 
 ## Usage
 
-TODO: Document the build steps (ref: [napi](https://napi.rs/)).
+```bash
+git clone https://github.com/leweyse/tada-app.git
 
-Create the `TADA_APP` environment variable in your system, and assign the location of this project as the value.
+cd tada-app
 
-The existing projects under the `templates` directory will be the base for the new app, and the optional **addons** are under the `addons` directory (surprise).
+pnpm install
+```
+
+Create a `.env` file in the root directory of the project and add the following content:
+
+```bash
+TADA_APP=<path-to-tada-app-in-your-system>
+```
+
+> Note: The `TADA_APP` environment variable is used to locate the project root directory (templates, addons, etc.). The existing projects under the `templates` directory will be the base for the new app, and the optional **addons** are under the `addons` directory (surprise).
+
+```bash
+pnpm build --filter create-tada-app
+```
+
+
+```bash
+TODO: Add instructions to add `create-tada-app` to your local registry (`npx`).
+```
 
 To generate a new app just run the following command anywhere in your system:
 
