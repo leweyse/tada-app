@@ -22,16 +22,11 @@ TADA_APP=<path-to-tada-app-in-your-system>
 
 ```bash
 pnpm build --filter create-tada-app
-```
 
+# install the cli in your local registry
+npm install -g create-tada-app
 
-```bash
-TODO: Add instructions to add `create-tada-app` to your local registry (`npx`).
-```
-
-To generate a new app just run the following command anywhere in your system:
-
-```bash
+# run the cli
 npx create-tada-app
 ```
 
@@ -58,4 +53,3 @@ I just wanted to learn something new. Actually... I still have a lot to learn, b
 - Add **addons** to existing apps.
 - Local test **addons** and their integration on different templates.
     - Possible solution: Create temporal files while running `dev` server.
-- Document CLI installation and rules.
