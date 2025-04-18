@@ -18,6 +18,12 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  addons/biomejs:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 1.8.3
+        version: 1.8.3
+
   addons/tailwindcss:
     devDependencies:
       autoprefixer:
@@ -48,9 +54,6 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
-      '@biomejs/biome':
-        specifier: 1.8.3
-        version: 1.8.3
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.3
