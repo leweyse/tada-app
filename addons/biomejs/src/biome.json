@@ -3,7 +3,35 @@
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              { "type": true, "source": ":PACKAGE_WITH_PROTOCOL:" },
+              { "type": true, "source": [":NODE:", ":URL:"] },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": ["react", "react-dom", "react-dom/**"]
+              },
+              { "type": true, "source": ":PACKAGE:" },
+              ":BLANK_LINE:",
+              { "type": true, "source": ":ALIAS:" },
+              ":BLANK_LINE:",
+              { "type": true },
+              ":BLANK_LINE:",
+              ":PACKAGE_WITH_PROTOCOL:",
+              [":NODE:", ":URL:"],
+              ":BLANK_LINE:",
+              ["react", "react-dom", "react-dom/**"],
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              ":ALIAS:",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        }
       }
     }
   },
