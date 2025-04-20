@@ -1,0 +1,6 @@
+{
+  "name": "glsl",
+  "devDependencies": {
+    "vite-plugin-glsl": "^1.4.0"
+  }
+}

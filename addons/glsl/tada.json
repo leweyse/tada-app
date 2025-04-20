@@ -1,0 +1,15 @@
+{
+  "templates": ["react", "solid"],
+  "entries": [
+    {
+      "mode": "prepend",
+      "input": "src/vite.config.ts",
+      "output": "."
+    },
+    {
+      "mode": "append",
+      "input": "src/vite-env.d.ts",
+      "output": "src"
+    }
+  ]
+}
