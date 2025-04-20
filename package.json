@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb",
-    "turbo": "^2.0.11",
+    "turbo": "^2.5.0",
     "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@10.8.1",
