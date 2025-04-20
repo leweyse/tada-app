@@ -25,7 +25,7 @@ use utils::fs::{
 };
 use utils::pm::install_dependencies;
 
-use prompts::{select_addons, select_app_name, select_template, try_installing_deps};
+use prompts::{prompt_app_path, prompt_install_deps, prompt_select_addons, prompt_select_template};
 
 const ENV_VAR: &str = "TADA_APP";
 const IGNORE: [&str; 3] = ["node_modules", ".turbo", "dist"];
@@ -63,7 +63,7 @@ fn main() {
         name: "".to_string(),
         path: OsString::new(),
     };
-    select_template(templates, &mut selected_template);
+    prompt_select_template(templates, &mut selected_template);
 
     let tada_addons_path = Path::new(&tada_app_path.clone()).join("addons");
 
@@ -76,13 +76,13 @@ fn main() {
 
     let mut selected_addons: Vec<Details> = Vec::new();
     if !addons.is_empty() {
-        select_addons(addons, &mut selected_addons);
+        prompt_select_addons(addons, &mut selected_addons);
     }
 
     let mut app_name = String::new();
-    select_app_name(selected_template.name.clone(), &mut app_name);
+    prompt_app_path(selected_template.name.clone(), &mut app_name);
 
-    let should_install_deps = try_installing_deps();
+    let should_install_deps = prompt_install_deps();
 
     let cwd = env::current_dir()
         .with_context(|| "Error reading current directory")

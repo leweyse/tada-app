@@ -8,7 +8,10 @@ use cliclack::{confirm, input, multiselect, select};
 
 use super::utils::fs::Details;
 
-pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &mut Details) {
+pub fn prompt_select_template(
+    options: BTreeMap<String, OsString>,
+    selected_template: &mut Details,
+) {
     let options_names = options
         .keys()
         .map(|x| (x.to_string(), x.clone(), ""))
@@ -35,7 +38,7 @@ pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &
     }
 }
 
-pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Details>) {
+pub fn prompt_select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Details>) {
     let options_names = options
         .keys()
         .map(|x| (x.to_string(), x.clone(), ""))
@@ -64,7 +67,7 @@ pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Detai
     }
 }
 
-pub fn select_app_name(default_name: String, app_name: &mut String) {
+pub fn prompt_app_path(default_name: String, app_name: &mut String) {
     let name_provided = input("Where do you want to create the project?")
         .placeholder("./my-project")
         .default_input(&default_name)
@@ -82,7 +85,7 @@ pub fn select_app_name(default_name: String, app_name: &mut String) {
     }
 }
 
-pub fn try_installing_deps() -> bool {
+pub fn prompt_install_deps() -> bool {
     let value = confirm("Do you want to install the dependencies?")
         .initial_value(true)
         .interact()
