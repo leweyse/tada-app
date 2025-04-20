@@ -56,20 +56,6 @@ fn main() {
     let mut app_name = String::new();
     prompt_app_path(&mut app_name);
 
-    let new_app_path = RelativePath::new(&app_name).to_logical_path(cwd);
-
-    if new_app_path.exists() {
-        if let Some(parent) = new_app_path.parent() {
-            std::fs::create_dir_all(parent)
-                .with_context(|| "Error creating directory")
-                .unwrap();
-        }
-    } else {
-        std::fs::create_dir_all(&new_app_path)
-            .with_context(|| "Error creating directory")
-            .unwrap();
-    }
-
     let tada_templates_path = Path::new(&tada_app_path.clone()).join("templates");
 
     let mut templates: BTreeMap<String, OsString> = BTreeMap::new();
@@ -101,6 +87,20 @@ fn main() {
     }
 
     let should_install_deps = prompt_install_deps();
+
+    let new_app_path = RelativePath::new(&app_name).to_logical_path(cwd);
+
+    if new_app_path.exists() {
+        if let Some(parent) = new_app_path.parent() {
+            std::fs::create_dir_all(parent)
+                .with_context(|| "Error creating directory")
+                .unwrap();
+        }
+    } else {
+        std::fs::create_dir_all(&new_app_path)
+            .with_context(|| "Error creating directory")
+            .unwrap();
+    }
 
     let items_to_ignore = IGNORE.map(|x| x.to_string()).to_vec();
     let items_in_template = get_items_in_template(&selected_template.path, items_to_ignore);
