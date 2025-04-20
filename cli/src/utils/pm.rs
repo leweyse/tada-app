@@ -35,8 +35,9 @@ pub fn install_dependencies(pm: &str, path: PathBuf) -> bool {
         _ => panic!("Invalid package manager"),
     };
 
-    match command.current_dir(path).arg("install").status() {
-        Ok(status) => status.success(),
-        Err(_) => false,
+    if let Ok(status) = command.current_dir(path).arg("install").status() {
+        return status.success();
     }
+
+    return false;
 }
