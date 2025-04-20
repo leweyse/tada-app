@@ -2,7 +2,7 @@
   "templates": ["all"],
   "entries": [
     {
-      "concatenate": true,
+      "mode": "prepend",
       "input": "src/index.css",
       "output": "./src/"
     },
