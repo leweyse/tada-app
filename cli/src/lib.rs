@@ -14,10 +14,10 @@ use std::collections::BTreeMap;
 use std::env;
 use std::ffi::OsString;
 use std::fs::File;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use anyhow::Context;
-use cliclack::{intro, outro, spinner, ProgressBar};
+use cliclack::{intro, outro, outro_cancel, spinner, ProgressBar};
 
 use utils::fs::{
     copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
@@ -40,18 +40,23 @@ pub fn start_spinner(message: &str) -> ProgressBar {
 
 #[napi]
 fn main() {
-    let tada_app_path: OsString;
+    let _ = intro("create-tada-app");
 
-    match env::var(ENV_VAR) {
-        Ok(path) => tada_app_path = OsString::from(path),
-        Err(_) => std::process::exit(1),
+    let tada_app_path: OsString;
+    if let Ok(path) = env::var(ENV_VAR) {
+        tada_app_path = OsString::from(path);
+    } else {
+        let _ = outro_cancel("Error reading environment variable");
+        std::process::exit(1);
     }
 
-    let cwd = env::current_dir()
-        .with_context(|| "Error reading current directory")
-        .unwrap();
-
-    let _ = intro("create-tada-app").with_context(|| "Error printing intro");
+    let cwd: PathBuf;
+    if let Ok(path) = env::current_dir() {
+        cwd = path;
+    } else {
+        let _ = outro_cancel("Error reading current directory");
+        std::process::exit(1);
+    }
 
     let mut app_name = String::new();
     prompt_app_path(&mut app_name);
@@ -62,7 +67,7 @@ fn main() {
     get_templates(tada_templates_path.as_os_str(), &mut templates);
 
     if templates.is_empty() {
-        println!("No templates found, exiting");
+        let _ = outro_cancel("No templates found");
         std::process::exit(1);
     }
 
@@ -92,14 +97,20 @@ fn main() {
 
     if new_app_path.exists() {
         if let Some(parent) = new_app_path.parent() {
-            std::fs::create_dir_all(parent)
-                .with_context(|| "Error creating directory")
-                .unwrap();
+            let result = std::fs::create_dir_all(parent);
+
+            if let Err(e) = result {
+                let _ = outro_cancel(format!("Error creating directory: {:?}", e));
+                std::process::exit(1);
+            }
         }
     } else {
-        std::fs::create_dir_all(&new_app_path)
-            .with_context(|| "Error creating directory")
-            .unwrap();
+        let result = std::fs::create_dir_all(&new_app_path);
+
+        if let Err(e) = result {
+            let _ = outro_cancel(format!("Error creating directory: {:?}", e));
+            std::process::exit(1);
+        }
     }
 
     let items_to_ignore = IGNORE.map(|x| x.to_string()).to_vec();
@@ -115,13 +126,14 @@ fn main() {
         &os_items_in_template,
         new_app_path.as_os_str(),
         &CopyOptions::new(),
-    )
-    .with_context(|| "Error copying template");
+    );
 
-    match template_copied {
-        Ok(_) => copy_template_spinner.stop("Template ready!"),
-        Err(e) => println!("{:?}", e),
+    if let Err(e) = template_copied {
+        let _ = outro_cancel(format!("Error copying template: {:?}", e));
+        std::process::exit(1);
     }
+
+    copy_template_spinner.stop("Template ready!");
 
     let project_package_json_path = Path::new(&new_app_path).join("package.json");
     let mut project_package_json: PackageJson =
@@ -188,20 +200,14 @@ fn main() {
                     &[addon_entry_os_source],
                     addon_entry_os_destination,
                     &addon_entry.mode,
-                )
-                .with_context(|| {
-                    format!(
+                );
+
+                if let Err(_) = addon_copied {
+                    let _ = outro_cancel(format!(
                         "Error copying addon: {:?}, from: {:?}, to: {:?}",
                         addon.name, addon_entry_os_source, addon_entry_os_destination
-                    )
-                });
-
-                match addon_copied {
-                    Ok(_) => (),
-                    Err(e) => {
-                        println!("{:?}", e);
-                        std::process::exit(1);
-                    }
+                    ));
+                    std::process::exit(1);
                 }
             }
         }
@@ -225,12 +231,15 @@ fn main() {
         .with_context(|| "Error creating package.json file")
         .unwrap();
 
-    std::io::Write::write(
+    let result = std::io::Write::write(
         &mut new_package_json_file,
         new_package_json_string.as_bytes(),
-    )
-    .with_context(|| "Error writing package.json file")
-    .unwrap();
+    );
+
+    if let Err(e) = result {
+        let _ = outro_cancel(format!("Error writing `package.json` file: {:?}", e));
+        std::process::exit(1);
+    }
 
     if should_install_deps {
         let install_deps_spinner = start_spinner("Installing dependencies...");
@@ -240,5 +249,5 @@ fn main() {
         }
     }
 
-    let _ = outro("ENJOY! 🎉").with_context(|| "Error printing outro");
+    let _ = outro("ENJOY! 🎉");
 }
