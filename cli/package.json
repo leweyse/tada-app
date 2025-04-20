@@ -40,5 +40,5 @@
     "test": "vite-node ./bin.cjs",
     "version": "napi version"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@10.8.1"
 }
