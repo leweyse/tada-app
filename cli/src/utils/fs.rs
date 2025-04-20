@@ -17,12 +17,27 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+pub enum AddonFileCopyType {
+    /// Sets the option true for overwrite existing files.
+    #[serde(rename = "overwrite")]
+    Overwrite,
+    /// Sets the option true for prepending files.
+    #[serde(rename = "prepend")]
+    Prepend,
+    /// Sets the option true for appending files.
+    #[serde(rename = "append")]
+    Append,
+    /// Sets the option true for skipping existing files.
+    #[serde(rename = "skip_if_exists")]
+    SkipIfExists,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Entry {
     pub input: String,
     pub output: String,
-    pub overwrite: Option<bool>,
-    pub concatenate: Option<bool>,
-    pub skip_exist: Option<bool>,
+
+    pub mode: Option<AddonFileCopyType>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -177,39 +192,7 @@ pub fn get_items_in_template(path: &OsStr, ignore: Vec<String>) -> Vec<OsString>
     items
 }
 
-pub struct CopyAddonFileOptions {
-    /// Sets the option true for overwrite existing files.
-    pub overwrite: bool,
-    /// Sets the option true for concatinating files.
-    pub concatenate: bool,
-    /// Sets the option true for skipping existing files.
-    pub skip_exist: bool,
-}
-impl CopyAddonFileOptions {
-    pub fn new(overwrite: bool, concatenate: bool, skip_exist: bool) -> CopyAddonFileOptions {
-        if overwrite && concatenate {
-            panic!("Cannot set both overwrite and concatenate to true");
-        }
-
-        let mut should_overwrite = false;
-        let mut should_concatenate = false;
-
-        if overwrite {
-            should_overwrite = true;
-        }
-
-        if concatenate {
-            should_concatenate = true;
-        }
-
-        CopyAddonFileOptions {
-            overwrite: should_overwrite,
-            concatenate: should_concatenate,
-            skip_exist,
-        }
-    }
-}
-pub fn copy_addon_file<P, Q>(from: P, to: Q, options: Option<&CopyAddonFileOptions>) -> Result<u64>
+pub fn copy_addon_file<P, Q>(from: P, to: Q, mode: &Option<AddonFileCopyType>) -> Result<u64>
 where
     P: AsRef<Path>,
     Q: AsRef<Path>,
@@ -234,19 +217,24 @@ where
         return Err(Error::new(ErrorKind::InvalidFile, "Path is not a file!"));
     }
 
-    let opts = CopyAddonFileOptions::new(
-        options.map_or(false, |o| o.overwrite),
-        options.map_or(false, |o| o.concatenate),
-        options.map_or(false, |o| o.skip_exist),
-    );
-
     let to = to.as_ref();
-    if !to.exists() || opts.overwrite {
-        return Ok(std::fs::copy(from, to)?);
+
+    if !to.exists() {
+        match std::fs::copy(from, to) {
+            Ok(_) => return Ok(0),
+            Err(e) => {
+                let msg = format!("Error creating file: {:?}", e);
+                return Err(Error::new(ErrorKind::InvalidFile, &msg));
+            }
+        }
     }
 
-    if opts.skip_exist {
-        return Ok(0);
+    if let Some(mode) = mode {
+        match mode {
+            AddonFileCopyType::Overwrite => return Ok(std::fs::copy(from, to)?),
+            AddonFileCopyType::SkipIfExists => return Ok(0),
+            _ => {}
+        }
     }
 
     let from_file = fs::File::open(from);
@@ -289,16 +277,32 @@ where
         }
     };
 
-    if opts.concatenate {
-        match to_file.write_all(format!("{}\n{}", from_content, to_content).as_bytes()) {
-            Ok(_) => {
-                return Ok(0);
+    if let Some(mode) = mode {
+        match mode {
+            AddonFileCopyType::Prepend => {
+                match to_file.write_all(format!("{}\n{}", from_content, to_content).as_bytes()) {
+                    Ok(_) => {
+                        return Ok(0);
+                    }
+                    Err(e) => {
+                        let msg = format!("Error writing file: {:?}", e);
+                        return Err(Error::new(ErrorKind::InvalidFile, &msg));
+                    }
+                };
             }
-            Err(e) => {
-                let msg = format!("Error writing file: {:?}", e);
-                return Err(Error::new(ErrorKind::InvalidFile, &msg));
+            AddonFileCopyType::Append => {
+                match to_file.write_all(format!("{}\n{}", to_content, from_content).as_bytes()) {
+                    Ok(_) => {
+                        return Ok(0);
+                    }
+                    Err(e) => {
+                        let msg = format!("Error writing file: {:?}", e);
+                        return Err(Error::new(ErrorKind::InvalidFile, &msg));
+                    }
+                };
             }
-        };
+            _ => {}
+        }
     }
 
     // If the destination file is not empty, create a patch with it
@@ -324,7 +328,7 @@ where
     };
 }
 
-pub fn copy_addon_items<P, Q>(from: &[P], to: Q, options: CopyAddonFileOptions) -> Result<u64>
+pub fn copy_addon_items<P, Q>(from: &[P], to: Q, mode: &Option<AddonFileCopyType>) -> Result<u64>
 where
     P: AsRef<Path>,
     Q: AsRef<Path>,
@@ -333,15 +337,10 @@ where
     for item in from {
         let item = item.as_ref();
         if item.is_dir() {
-            result += dir::copy(item, &to, &Default::default())?;
+            result += dir::copy(item, &to, &Default::default()).unwrap();
         } else if let Some(file_name) = item.file_name() {
             if let Some(file_name) = file_name.to_str() {
-                let file_options = CopyAddonFileOptions {
-                    overwrite: options.overwrite,
-                    skip_exist: options.skip_exist,
-                    concatenate: options.concatenate,
-                };
-                result += copy_addon_file(item, to.as_ref().join(file_name), Some(&file_options))?;
+                result += copy_addon_file(item, to.as_ref().join(file_name), mode).unwrap();
             }
         } else {
             return Err(Error::new(ErrorKind::InvalidFileName, "Invalid file name"));

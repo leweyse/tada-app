@@ -21,7 +21,7 @@ use cliclack::{intro, outro};
 
 use utils::fs::{
     copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
-    CopyAddonFileOptions, Details, PackageJson, TadaJson,
+    Details, PackageJson, TadaJson,
 };
 use utils::pm::install_dependencies;
 use utils::style::{start_spinner, ColorConfig, BOLD_GREEN};
@@ -176,16 +176,10 @@ fn main() {
                 let addon_entry_os_source = addon_entry_source.as_os_str();
                 let addon_entry_os_destination = addon_entry_destination.as_os_str();
 
-                let options = CopyAddonFileOptions {
-                    overwrite: addon_entry.overwrite.is_some(),
-                    skip_exist: addon_entry.skip_exist.is_some(),
-                    concatenate: addon_entry.concatenate.is_some(),
-                };
-
                 let addon_copied = copy_addon_items(
                     &[addon_entry_os_source],
                     addon_entry_os_destination,
-                    options,
+                    &addon_entry.mode,
                 )
                 .with_context(|| {
                     format!(
