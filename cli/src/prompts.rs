@@ -8,13 +8,16 @@ use cliclack::{confirm, input, multiselect, select};
 
 use super::utils::fs::Details;
 
-pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &mut Details) {
+pub fn prompt_select_template(
+    options: BTreeMap<String, OsString>,
+    selected_template: &mut Details,
+) {
     let options_names = options
         .keys()
         .map(|x| (x.to_string(), x.clone(), ""))
         .collect::<Vec<_>>();
 
-    let template_selected = select("What template do you want to use?")
+    let template_selected = select("Choose a template")
         .items(options_names.as_slice())
         .interact()
         .with_context(|| "No template selected, exiting");
@@ -24,7 +27,7 @@ pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &
             selected_template.name = selected.clone();
             selected_template.path = options
                 .get(&selected)
-                .with_context(|| "Error getting path")
+                .with_context(|| "Unable to get template")
                 .unwrap()
                 .to_os_string();
         }
@@ -35,13 +38,13 @@ pub fn select_template(options: BTreeMap<String, OsString>, selected_template: &
     }
 }
 
-pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Details>) {
+pub fn prompt_select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Details>) {
     let options_names = options
         .keys()
         .map(|x| (x.to_string(), x.clone(), ""))
         .collect::<Vec<_>>();
 
-    let addons_selected = multiselect("Select the addons you want to use:")
+    let addons_selected = multiselect("Choose the addons you want to use:")
         .items(options_names.as_slice())
         .required(false)
         .interact()
@@ -64,10 +67,9 @@ pub fn select_addons(options: BTreeMap<String, OsString>, addons: &mut Vec<Detai
     }
 }
 
-pub fn select_app_name(default_name: String, app_name: &mut String) {
-    let name_provided = input("Where do you want to create the project?")
+pub fn prompt_app_path(app_name: &mut String) {
+    let name_provided = input("What is the name of your project?")
         .placeholder("./my-project")
-        .default_input(&default_name)
         .interact()
         .with_context(|| "No project name provided, exiting");
 
@@ -82,8 +84,8 @@ pub fn select_app_name(default_name: String, app_name: &mut String) {
     }
 }
 
-pub fn try_installing_deps() -> bool {
-    let value = confirm("Do you want to install the dependencies?")
+pub fn prompt_install_deps() -> bool {
+    let value = confirm("Should we install the dependencies?")
         .initial_value(true)
         .interact()
         .with_context(|| "No confirmation provided, exiting")
