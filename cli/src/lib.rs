@@ -17,19 +17,26 @@ use std::fs::File;
 use std::path::Path;
 
 use anyhow::Context;
-use cliclack::{intro, outro};
+use cliclack::{intro, outro, spinner, ProgressBar};
 
 use utils::fs::{
     copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
     Details, PackageJson, TadaJson,
 };
 use utils::pm::install_dependencies;
-use utils::style::{start_spinner, ColorConfig, BOLD_GREEN};
 
 use prompts::{select_addons, select_app_name, select_template, try_installing_deps};
 
 const ENV_VAR: &str = "TADA_APP";
 const IGNORE: [&str; 3] = ["node_modules", ".turbo", "dist"];
+
+pub fn start_spinner(message: &str) -> ProgressBar {
+    let spinner = spinner();
+
+    spinner.start(message);
+
+    spinner
+}
 
 #[napi]
 fn main() {
@@ -102,16 +109,17 @@ fn main() {
         .map(|x| Path::new(x).as_os_str())
         .collect::<Vec<_>>();
 
-    let color_config = ColorConfig::infer();
-    let options = CopyOptions::new();
+    let copy_template_spinner = start_spinner("Copying template...");
 
-    let copy_template_bar = start_spinner("Copying template...");
-
-    let template_copied = copy_items(&os_items_in_template, new_app_path.as_os_str(), &options)
-        .with_context(|| "Error copying template");
+    let template_copied = copy_items(
+        &os_items_in_template,
+        new_app_path.as_os_str(),
+        &CopyOptions::new(),
+    )
+    .with_context(|| "Error copying template");
 
     match template_copied {
-        Ok(_) => copy_template_bar.stop("Template ready!"),
+        Ok(_) => copy_template_spinner.stop("Template ready!"),
         Err(e) => println!("{:?}", e),
     }
 
@@ -137,7 +145,7 @@ fn main() {
     }
 
     if !selected_addons.is_empty() {
-        let copy_addons_bar = start_spinner("Copying addons...");
+        let copy_addons_spinner = start_spinner("Copying addons...");
 
         for addon in &selected_addons {
             let addon_path = Path::new(&addon.path);
@@ -198,7 +206,7 @@ fn main() {
             }
         }
 
-        copy_addons_bar.stop("Addons ready!");
+        copy_addons_spinner.stop("Addons ready!");
     }
 
     project_package_json.name = match new_app_path.file_name() {
@@ -225,18 +233,12 @@ fn main() {
     .unwrap();
 
     if should_install_deps {
-        let install_progress = start_spinner("Installing dependencies...");
+        let install_deps_spinner = start_spinner("Installing dependencies...");
 
         if install_dependencies("pnpm", new_app_path) {
-            install_progress.stop("Dependencies installed!");
+            install_deps_spinner.stop("Dependencies installed!");
         }
     }
 
-    let outro_msg = format!(
-        "{}. {}",
-        color_config.rainbow("PROJECT CREATED"),
-        color!(color_config, BOLD_GREEN, "{}", "ENJOY! 🎉"),
-    );
-
-    let _ = outro(outro_msg).with_context(|| "Error printing outro");
+    let _ = outro("ENJOY! 🎉").with_context(|| "Error printing outro");
 }
