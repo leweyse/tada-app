@@ -7,11 +7,8 @@
       "output": "./src/"
     },
     {
-      "input": "src/tailwind.config.ts",
-      "output": "."
-    },
-    {
-      "input": "src/postcss.config.cjs",
+      "mode": "prepend",
+      "input": "src/vite.config.ts",
       "output": "."
     }
   ]
