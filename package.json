@@ -8,7 +8,7 @@
     "check": "biome check --write ."
   },
   "devDependencies": {
-    "@biomejs/biome": "https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb",
+    "@biomejs/biome": "2.0.0-beta.2",
     "turbo": "^2.5.0",
     "typescript": "^5.8.3"
   },
