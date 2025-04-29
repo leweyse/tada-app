@@ -21,8 +21,8 @@ importers:
   addons/biomejs:
     devDependencies:
       '@biomejs/biome':
-        specifier: https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb
-        version: https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
 
   addons/glsl:
     devDependencies:
@@ -35,12 +35,6 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.4(vite@6.3.2(@types/node@20.11.24)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.5.0))
-      autoprefixer:
-        specifier: ^10.4.21
-        version: 10.4.21(postcss@8.5.3)
-      postcss:
-        specifier: ^8.5.3
-        version: 8.5.3
       tailwindcss:
         specifier: ^4.1.4
         version: 4.1.4
@@ -72,6 +66,9 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.9.0
         version: 3.9.0(vite@6.3.2(@types/node@20.11.24)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.5.0))
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -85,6 +82,9 @@ importers:
         specifier: ^1.9.5
         version: 1.9.5
     devDependencies:
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -191,22 +191,10 @@ packages:
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/biome@https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
-    hasBin: true
-
   '@biomejs/cli-darwin-arm64@2.0.0-beta.2':
     resolution: {integrity: sha512-LJ7wjYNZkqcQDV6Xyoy9pwFp931rTDp5JvJkF+oPkucurn1kg07sYKV1fPErbfgnLzquaGHAez3wVA8MsTf79A==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
-    os: [darwin]
-
-  '@biomejs/cli-darwin-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-arm64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-arm64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
     os: [darwin]
 
   '@biomejs/cli-darwin-x64@2.0.0-beta.2':
@@ -215,22 +203,10 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-x64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-x64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
-    os: [darwin]
-
   '@biomejs/cli-linux-arm64-musl@2.0.0-beta.2':
     resolution: {integrity: sha512-OTPJalprRj+sGJKOFOrtPvRO2GqCzRBDJTk2C4MbK9ed5+h9eBMd8/A2IdQ8XOm0BECJWvIomzDaNEwKN3pNYw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
-    os: [linux]
-
-  '@biomejs/cli-linux-arm64-musl@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64-musl@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64-musl@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
     os: [linux]
 
   '@biomejs/cli-linux-arm64@2.0.0-beta.2':
@@ -239,22 +215,10 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
-    os: [linux]
-
   '@biomejs/cli-linux-x64-musl@2.0.0-beta.2':
     resolution: {integrity: sha512-1TsFLIuefU47cdGLw1ELUVggvZsbyJbgrxy4KSeUQ3Ko1dJ9loOPvDC3X6UQBamHFdaKpbyZYzh2BiH81Pf55g==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
-    os: [linux]
-
-  '@biomejs/cli-linux-x64-musl@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64-musl@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64-musl@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
     os: [linux]
 
   '@biomejs/cli-linux-x64@2.0.0-beta.2':
@@ -263,34 +227,16 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
-    os: [linux]
-
   '@biomejs/cli-win32-arm64@2.0.0-beta.2':
     resolution: {integrity: sha512-MM60v1kLPONOwQK45jRbRwUes/083Hy/dzmO8QsQJ5eW5sV0oPIuZhuX+SMY3z3TyDmfuXZoemgPETeEjB+TdA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-arm64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-arm64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
-    os: [win32]
-
   '@biomejs/cli-win32-x64@2.0.0-beta.2':
     resolution: {integrity: sha512-tTHhVMEqRRBhpfWxwYTSGV8PIOQqc/RQz7WmuX/zaBkBbB9+hc2yeMmn6DPRPnaxNPjkNgD/Kwy3prQ4SxYAAw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
-    os: [win32]
-
-  '@biomejs/cli-win32-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-x64@5f890fb':
-    resolution: {tarball: https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-x64@5f890fb}
-    version: 1.9.4
-    engines: {node: '>=14.21.3'}
     os: [win32]
 
   '@esbuild/aix-ppc64@0.21.5':
@@ -996,13 +942,6 @@ packages:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}
     engines: {node: '>=4'}
 
-  autoprefixer@10.4.21:
-    resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
-    engines: {node: ^10 || ^12 || >=14}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.1.0
-
   babel-plugin-jsx-dom-expressions@0.38.1:
     resolution: {integrity: sha512-4FD4H69Cu4jHx2uLDEvx4YC5T/fC/Dmaafhsm8hXm7SjHYzjr09gBVyHdoFza+91f/g9e6tIzjbLCMkOXwmlew==}
     peerDependencies:
@@ -1018,20 +957,12 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
-  browserslist@4.24.4:
-    resolution: {integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==}
-    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
-    hasBin: true
-
   cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
 
   caniuse-lite@1.0.30001651:
     resolution: {integrity: sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg==}
-
-  caniuse-lite@1.0.30001715:
-    resolution: {integrity: sha512-7ptkFGMm2OAOgvZpwgA4yjQ5SQbrNVGdRjzH0pBdy1Fasvcr+KAeECmbCAECzTuDuoX0FCY8KzUxjf9+9kfZEw==}
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -1062,9 +993,6 @@ packages:
     resolution: {integrity: sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw==}
     engines: {node: '>=8'}
 
-  electron-to-chromium@1.5.139:
-    resolution: {integrity: sha512-GGnRYOTdN5LYpwbIr0rwP/ZHOQSvAF6TG0LSzp28uCBb9JiXHJGmaaKw29qjNJc5bGnnp6kXJqRnGMQoELwi5w==}
-
   electron-to-chromium@1.5.6:
     resolution: {integrity: sha512-jwXWsM5RPf6j9dPYzaorcBSUg6AiqocPEyMpkchkvntaH9HGfOOMZwxMJjDY/XEs3T5dM7uyH1VhRMkqUU9qVw==}
 
@@ -1089,10 +1017,6 @@ packages:
     resolution: {integrity: sha512-ErCHMCae19vR8vQGe50xIsVomy19rg6gFu3+r3jkEO46suLMWBksvVyoGgQV+jOfl84ZSOSlmv6Gxa89PmTGmA==}
     engines: {node: '>=6'}
 
-  escalade@3.2.0:
-    resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
-    engines: {node: '>=6'}
-
   escape-string-regexp@1.0.5:
     resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
@@ -1107,9 +1031,6 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
-
-  fraction.js@4.3.7:
-    resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -1237,13 +1158,6 @@ packages:
   node-releases@2.0.18:
     resolution: {integrity: sha512-d9VeXT4SJ7ZeOqGX6R5EM022wpL+eWPooLI+5UpWn2jCT1aosUQEhQP214x33Wkwx3JQMvIm+tIoVOdodFS40g==}
 
-  node-releases@2.0.19:
-    resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
-
-  normalize-range@0.1.2:
-    resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
-    engines: {node: '>=0.10.0'}
-
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
 
@@ -1256,9 +1170,6 @@ packages:
   picomatch@4.0.2:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
-
-  postcss-value-parser@4.2.0:
-    resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
   postcss@8.5.3:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
@@ -1375,12 +1286,6 @@ packages:
 
   update-browserslist-db@1.1.0:
     resolution: {integrity: sha512-EdRAaAyk2cUE1wOf2DkEhzxqOQvFOoRJFNS6NeyJ01Gp2beMRpBAINjM2iDXE3KCuKhwnvHIQCJm6ThL2Z+HzQ==}
-    hasBin: true
-    peerDependencies:
-      browserslist: '>= 4.21.0'
-
-  update-browserslist-db@1.1.3:
-    resolution: {integrity: sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==}
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
@@ -1637,63 +1542,28 @@ snapshots:
       '@biomejs/cli-win32-arm64': 2.0.0-beta.2
       '@biomejs/cli-win32-x64': 2.0.0-beta.2
 
-  '@biomejs/biome@https://pkg.pr.new/biomejs/biome/@biomejs/biome@5f890fb':
-    optionalDependencies:
-      '@biomejs/cli-darwin-arm64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-arm64@5f890fb
-      '@biomejs/cli-darwin-x64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-x64@5f890fb
-      '@biomejs/cli-linux-arm64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64@5f890fb
-      '@biomejs/cli-linux-arm64-musl': https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64-musl@5f890fb
-      '@biomejs/cli-linux-x64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64@5f890fb
-      '@biomejs/cli-linux-x64-musl': https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64-musl@5f890fb
-      '@biomejs/cli-win32-arm64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-arm64@5f890fb
-      '@biomejs/cli-win32-x64': https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-x64@5f890fb
-
   '@biomejs/cli-darwin-arm64@2.0.0-beta.2':
-    optional: true
-
-  '@biomejs/cli-darwin-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-arm64@5f890fb':
     optional: true
 
   '@biomejs/cli-darwin-x64@2.0.0-beta.2':
     optional: true
 
-  '@biomejs/cli-darwin-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-darwin-x64@5f890fb':
-    optional: true
-
   '@biomejs/cli-linux-arm64-musl@2.0.0-beta.2':
-    optional: true
-
-  '@biomejs/cli-linux-arm64-musl@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64-musl@5f890fb':
     optional: true
 
   '@biomejs/cli-linux-arm64@2.0.0-beta.2':
     optional: true
 
-  '@biomejs/cli-linux-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-arm64@5f890fb':
-    optional: true
-
   '@biomejs/cli-linux-x64-musl@2.0.0-beta.2':
-    optional: true
-
-  '@biomejs/cli-linux-x64-musl@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64-musl@5f890fb':
     optional: true
 
   '@biomejs/cli-linux-x64@2.0.0-beta.2':
     optional: true
 
-  '@biomejs/cli-linux-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-linux-x64@5f890fb':
-    optional: true
-
   '@biomejs/cli-win32-arm64@2.0.0-beta.2':
     optional: true
 
-  '@biomejs/cli-win32-arm64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-arm64@5f890fb':
-    optional: true
-
   '@biomejs/cli-win32-x64@2.0.0-beta.2':
-    optional: true
-
-  '@biomejs/cli-win32-x64@https://pkg.pr.new/biomejs/biome/@biomejs/cli-win32-x64@5f890fb':
     optional: true
 
   '@esbuild/aix-ppc64@0.21.5':
@@ -2141,16 +2011,6 @@ snapshots:
     dependencies:
       color-convert: 1.9.3
 
-  autoprefixer@10.4.21(postcss@8.5.3):
-    dependencies:
-      browserslist: 4.24.4
-      caniuse-lite: 1.0.30001715
-      fraction.js: 4.3.7
-      normalize-range: 0.1.2
-      picocolors: 1.1.1
-      postcss: 8.5.3
-      postcss-value-parser: 4.2.0
-
   babel-plugin-jsx-dom-expressions@0.38.1(@babel/core@7.25.2):
     dependencies:
       '@babel/core': 7.25.2
@@ -2172,18 +2032,9 @@ snapshots:
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.3)
 
-  browserslist@4.24.4:
-    dependencies:
-      caniuse-lite: 1.0.30001715
-      electron-to-chromium: 1.5.139
-      node-releases: 2.0.19
-      update-browserslist-db: 1.1.3(browserslist@4.24.4)
-
   cac@6.7.14: {}
 
   caniuse-lite@1.0.30001651: {}
-
-  caniuse-lite@1.0.30001715: {}
 
   chalk@2.4.2:
     dependencies:
@@ -2206,8 +2057,6 @@ snapshots:
       ms: 2.1.3
 
   detect-libc@2.0.3: {}
-
-  electron-to-chromium@1.5.139: {}
 
   electron-to-chromium@1.5.6: {}
 
@@ -2274,8 +2123,6 @@ snapshots:
 
   escalade@3.1.2: {}
 
-  escalade@3.2.0: {}
-
   escape-string-regexp@1.0.5: {}
 
   estree-walker@2.0.2: {}
@@ -2283,8 +2130,6 @@ snapshots:
   fdir@6.4.4(picomatch@4.0.2):
     optionalDependencies:
       picomatch: 4.0.2
-
-  fraction.js@4.3.7: {}
 
   fsevents@2.3.3:
     optional: true
@@ -2368,10 +2213,6 @@ snapshots:
 
   node-releases@2.0.18: {}
 
-  node-releases@2.0.19: {}
-
-  normalize-range@0.1.2: {}
-
   pathe@2.0.3: {}
 
   picocolors@1.0.1: {}
@@ -2379,8 +2220,6 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.2: {}
-
-  postcss-value-parser@4.2.0: {}
 
   postcss@8.5.3:
     dependencies:
@@ -2522,12 +2361,6 @@ snapshots:
       browserslist: 4.23.3
       escalade: 3.1.2
       picocolors: 1.0.1
-
-  update-browserslist-db@1.1.3(browserslist@4.24.4):
-    dependencies:
-      browserslist: 4.24.4
-      escalade: 3.2.0
-      picocolors: 1.1.1
 
   validate-html-nesting@1.2.2: {}
 
