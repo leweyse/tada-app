@@ -18,6 +18,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Context;
 use cliclack::{intro, outro, outro_cancel, spinner, ProgressBar};
+use dotenv::dotenv;
 
 use utils::fs::{
     copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
@@ -40,6 +41,8 @@ pub fn start_spinner(message: &str) -> ProgressBar {
 
 #[napi]
 fn main() {
+    dotenv().ok();
+
     let _ = intro("create-tada-app");
 
     let tada_app_path: OsString;
