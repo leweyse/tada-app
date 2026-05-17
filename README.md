@@ -12,23 +12,23 @@ cd tada-app
 pnpm install
 ```
 
-Create a `.env` file in the root directory of the project and add the following content:
-
-```bash
-TADA_APP=<path-to-tada-app-in-your-system>
-```
-
-> Note: The `TADA_APP` environment variable is used to locate the project root directory (templates, addons, etc.). The existing projects under the `templates` directory will be the base for the new app, and the optional **addons** are under the `addons` directory (surprise).
-
 ```bash
 pnpm build --filter create-tada-app
 
 # install the cli in your local registry
-npm install -g ./cli
-
-# run the cli
-npx create-tada-app
+cd cli && pnpm link
 ```
+
+> The build embeds this repo's location into the CLI binary, so rerun `pnpm build --filter create-tada-app` if you move the repo.
+
+The CLI scaffolds the new app into the **current working directory**, so `cd` to your target dir first:
+
+```bash
+cd ~/code        # or wherever you want to create your app
+create-tada-app
+```
+
+> Note: The CLI reads templates from this repo's `templates/` directory (base for the new app) and optional **addons** from `addons/`.
 
 ## What is the goal?
 

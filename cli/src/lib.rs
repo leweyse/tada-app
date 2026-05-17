@@ -18,7 +18,6 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Context;
 use cliclack::{intro, outro, outro_cancel, spinner, ProgressBar};
-use dotenv::dotenv;
 
 use utils::fs::{
     copy_addon_items, get_filtered_addons, get_items_in_template, get_templates, read_json_file,
@@ -28,7 +27,6 @@ use utils::pm::install_dependencies;
 
 use prompts::{prompt_app_path, prompt_install_deps, prompt_select_addons, prompt_select_template};
 
-const ENV_VAR: &str = "TADA_APP";
 const IGNORE: [&str; 3] = ["node_modules", ".turbo", "dist"];
 
 pub fn start_spinner(message: &str) -> ProgressBar {
@@ -41,17 +39,13 @@ pub fn start_spinner(message: &str) -> ProgressBar {
 
 #[napi]
 fn main() {
-    dotenv().ok();
-
     let _ = intro("create-tada-app");
 
-    let tada_app_path: OsString;
-    if let Ok(path) = env::var(ENV_VAR) {
-        tada_app_path = OsString::from(path);
-    } else {
-        let _ = outro_cancel("Error reading environment variable");
-        std::process::exit(1);
-    }
+    let tada_app_path: OsString = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("CARGO_MANIFEST_DIR has no parent")
+        .as_os_str()
+        .to_os_string();
 
     let cwd: PathBuf;
     if let Ok(path) = env::current_dir() {
