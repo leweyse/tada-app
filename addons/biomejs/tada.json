@@ -2,7 +2,8 @@
   "templates": ["all"],
   "entries": [
     {
-      "input": "src/biome.json",
+      "file_name": "biome.json",
+      "input": "src/biome.config.json",
       "output": "."
     }
   ]

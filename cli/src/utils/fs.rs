@@ -8,10 +8,10 @@ use std::ffi::{OsStr, OsString};
 use std::fmt::Debug;
 use std::fs;
 use std::io::{BufReader, Read, Seek, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::u64;
 
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use diffy::{apply, create_patch};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -37,6 +37,7 @@ pub struct Entry {
     pub input: String,
     pub output: String,
 
+    pub file_name: Option<String>,
     pub mode: Option<AddonFileCopyType>,
 }
 
@@ -55,16 +56,30 @@ pub struct PackageJson {
     #[serde(flatten)]
     other: HashMap<String, serde_json::Value>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scripts: Option<BTreeMap<String, String>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub dependencies: Option<BTreeMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub devDependencies: Option<BTreeMap<String, String>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TadaProjectJson {
+    pub template: String,
+    pub addons: Vec<String>,
 }
 
 #[derive(Debug)]
 pub struct Details {
     pub name: String,
     pub path: OsString,
+}
+
+pub struct AddonCopyOptions<'a> {
+    pub mode: &'a Option<AddonFileCopyType>,
+    pub file_name: &'a str,
 }
 
 pub fn read_json_file<T>(path: &OsStr) -> T
@@ -82,6 +97,94 @@ where
         .unwrap();
 
     package_json
+}
+
+pub fn try_read_json_file<T>(path: &OsStr) -> anyhow::Result<T>
+where
+    T: DeserializeOwned,
+{
+    let file = match fs::File::open(path) {
+        Ok(f) => f,
+        Err(e) => {
+            return Err(anyhow!(
+                "Error reading file {}: {}",
+                path.to_string_lossy(),
+                e
+            ));
+        }
+    };
+
+    let reader = BufReader::new(file);
+
+    match serde_json::from_reader(reader) {
+        Ok(value) => Ok(value),
+        Err(e) => Err(anyhow!("Error parsing JSON: {}", e)),
+    }
+}
+
+pub fn write_project_marker(
+    project_root: &Path,
+    template: &str,
+    addons: &[String],
+) -> anyhow::Result<()> {
+    let marker = TadaProjectJson {
+        template: template.to_string(),
+        addons: addons.to_vec(),
+    };
+    let path = project_root.join("tada.json");
+
+    let contents = match serde_json::to_string_pretty(&marker) {
+        Ok(c) => c,
+        Err(e) => return Err(anyhow!("Error serializing tada.json: {}", e)),
+    };
+
+    let mut file = match fs::File::create(&path) {
+        Ok(f) => f,
+        Err(e) => return Err(anyhow!("Error creating tada.json at {:?}: {}", path, e)),
+    };
+
+    if let Err(e) = file.write_all(contents.as_bytes()) {
+        return Err(anyhow!("Error writing tada.json: {}", e));
+    }
+
+    Ok(())
+}
+
+pub fn write_package_json(path: &Path, pkg: &PackageJson) -> anyhow::Result<()> {
+    let contents = match serde_json::to_string_pretty(pkg) {
+        Ok(c) => c,
+        Err(e) => return Err(anyhow!("Error serializing package.json: {}", e)),
+    };
+
+    let mut file = match fs::File::create(path) {
+        Ok(f) => f,
+        Err(e) => return Err(anyhow!("Error creating package.json file: {}", e)),
+    };
+
+    if let Err(e) = file.write_all(contents.as_bytes()) {
+        return Err(anyhow!("Error writing package.json file: {}", e));
+    }
+
+    Ok(())
+}
+
+pub fn merge_map(
+    target: &mut Option<BTreeMap<String, String>>,
+    source: Option<BTreeMap<String, String>>,
+) {
+    if let Some(src) = source {
+        let dest = target.get_or_insert_with(BTreeMap::new);
+        for (k, v) in src {
+            dest.insert(k, v);
+        }
+    }
+}
+
+pub fn tada_app_path() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("CARGO_MANIFEST_DIR has no parent")
+        .to_path_buf()
 }
 
 pub fn get_templates(path: &OsStr, templates: &mut BTreeMap<String, OsString>) {
@@ -328,7 +431,7 @@ where
     };
 }
 
-pub fn copy_addon_items<P, Q>(from: &[P], to: Q, mode: &Option<AddonFileCopyType>) -> Result<u64>
+pub fn copy_addon_items<P, Q>(from: &[P], to: Q, options: &AddonCopyOptions) -> Result<u64>
 where
     P: AsRef<Path>,
     Q: AsRef<Path>,
@@ -338,12 +441,9 @@ where
         let item = item.as_ref();
         if item.is_dir() {
             result += dir::copy(item, &to, &Default::default()).unwrap();
-        } else if let Some(file_name) = item.file_name() {
-            if let Some(file_name) = file_name.to_str() {
-                result += copy_addon_file(item, to.as_ref().join(file_name), mode).unwrap();
-            }
         } else {
-            return Err(Error::new(ErrorKind::InvalidFileName, "Invalid file name"));
+            result +=
+                copy_addon_file(item, to.as_ref().join(options.file_name), options.mode).unwrap();
         }
     }
 

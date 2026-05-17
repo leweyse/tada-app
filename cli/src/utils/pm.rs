@@ -1,5 +1,7 @@
 use std::{path::PathBuf, process::Command};
 
+use anyhow::{anyhow, Result};
+
 fn pnpm() -> Command {
     #[cfg(windows)]
     const PNPM: &str = "pnpm.CMD";
@@ -9,35 +11,17 @@ fn pnpm() -> Command {
     Command::new(PNPM)
 }
 
-fn yarn() -> Command {
-    #[cfg(windows)]
-    const YARN: &str = "yarn.CMD";
-    #[cfg(not(windows))]
-    const YARN: &str = "yarn";
+pub fn install_dependencies(path: PathBuf) -> Result<()> {
+    let mut command = pnpm();
 
-    Command::new(YARN)
-}
-
-fn npm() -> Command {
-    #[cfg(windows)]
-    const NPM: &str = "npm.CMD";
-    #[cfg(not(windows))]
-    const NPM: &str = "npm";
-
-    Command::new(NPM)
-}
-
-pub fn install_dependencies(pm: &str, path: PathBuf) -> bool {
-    let mut command = match pm {
-        "pnpm" => pnpm(),
-        "yarn" => yarn(),
-        "npm" => npm(),
-        _ => panic!("Invalid package manager"),
+    let status = match command.current_dir(path).arg("install").status() {
+        Ok(s) => s,
+        Err(e) => return Err(anyhow!("Failed to run pnpm: {}", e)),
     };
 
-    if let Ok(status) = command.current_dir(path).arg("install").status() {
-        return status.success();
+    if !status.success() {
+        return Err(anyhow!("pnpm install exited with status: {}", status));
     }
 
-    return false;
+    Ok(())
 }

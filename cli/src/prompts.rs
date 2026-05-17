@@ -85,7 +85,7 @@ pub fn prompt_app_path(app_name: &mut String) {
 }
 
 pub fn prompt_install_deps() -> bool {
-    let value = confirm("Should we install the dependencies?")
+    let value = confirm("Should we install the dependencies with pnpm?")
         .initial_value(true)
         .interact()
         .with_context(|| "No confirmation provided, exiting")
