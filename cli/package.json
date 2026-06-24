@@ -28,7 +28,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@napi-rs/cli": "^3.7.0",
+    "@napi-rs/cli": "^3.7.2",
     "vite-node": "^6.0.0"
   },
   "engines": {
@@ -40,5 +40,5 @@
     "test": "vite-node ./bin.cjs",
     "version": "napi version"
   },
-  "packageManager": "pnpm@11.5.2"
+  "packageManager": "pnpm@11.9.0"
 }
