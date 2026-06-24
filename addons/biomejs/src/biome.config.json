@@ -36,7 +36,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/dist"]
+    "includes": ["**", "!**/node_modules", "!**/dist", "!**/routeTree.gen.ts"]
   },
   "formatter": {
     "enabled": true,

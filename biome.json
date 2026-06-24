@@ -42,7 +42,8 @@
       "./cli/**/*",
       "!**/node_modules",
       "!**/dist",
-      "!**/cli"
+      "!**/cli",
+      "!**/routeTree.gen.ts"
     ]
   },
   "formatter": {
