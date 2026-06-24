@@ -33,6 +33,7 @@ coverage
 *.tsbuildinfo
 
 # Build Outputs
+.tanstack/
 .next/
 out/
 build
