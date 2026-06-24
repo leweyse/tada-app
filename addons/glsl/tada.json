@@ -1,5 +1,5 @@
 {
-  "templates": ["react", "solid"],
+  "templates": ["all"],
   "entries": [
     {
       "mode": "prepend",
